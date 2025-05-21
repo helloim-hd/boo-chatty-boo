@@ -1,0 +1,34 @@
+<template>
+  <div class="m-6">
+    <div v-if="page == 'main-page'">
+      <SearchRoomInput @show-rooms="showRooms" />
+      <Rooms :rooms="rooms" @select-room="selectRoom" />
+    </div>
+    <Chat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { FwbInput } from 'flowbite-vue';
+import room from '../services/room';
+import Rooms from './Rooms.vue';
+import SearchRoomInput from './SearchRoomInput.vue';
+import Chat from './Chat.vue';
+
+const name = ref('');
+const rooms = ref([]);
+const selectedRoom = ref('');
+const page = ref('main-page');
+
+function showRooms(value) {
+  // const rooms = await room.getRoomsByName(name.value);
+  rooms.value = value.rooms;
+  name.value = value.name;
+}
+
+function selectRoom(value) {
+  selectedRoom.value = value;
+  page.value = 'chat-page';
+}
+</script>
