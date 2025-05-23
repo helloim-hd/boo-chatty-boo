@@ -1,5 +1,5 @@
 <template>
-  <div class="m-6">
+  <div id="scrollable-container" class="m-6 w-full max-w-150 mx-auto flex flex-col relative h-180 overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
     <div v-if="page == 'main-page'">
       <SearchRoomInput @show-rooms="showRooms" />
       <Rooms :rooms="rooms" @select-room="selectRoom" />
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { FwbInput } from 'flowbite-vue';
 import room from '../services/room';
 import Rooms from './Rooms.vue';
@@ -20,6 +20,10 @@ const name = ref('');
 const rooms = ref([]);
 const selectedRoom = ref('');
 const page = ref('main-page');
+
+onMounted(() => {
+
+})
 
 function showRooms(value) {
   // const rooms = await room.getRoomsByName(name.value);

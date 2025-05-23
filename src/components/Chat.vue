@@ -1,5 +1,5 @@
 <template>
-  <div class="m-6">
+  <div class="m-6 absolute inset-x-0 bottom-0 h-16">
     <div v-for="msg in messages" class="flex flex-col items-start">
       <OthersChatBubble
         v-if="msg['client_id'].trim() !== name.trim()"
@@ -9,12 +9,13 @@
       <MyChatBubble v-else :message="msg.text" />
     </div>
 
-    <div class="relative w-full mt-5">
+    <div class="relative w-full mt-5 sticky bottom-0">
       <input
         v-model="newMessage"
         class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
         placeholder="Message"
         required
+        @keyup.enter="sendMessage"
       />
       <button
         class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer"
@@ -40,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, onUpdated } from 'vue';
 import MyChatBubble from './MyChatBubble.vue';
 import OthersChatBubble from './OthersChatBubble.vue';
 import { ChatClient } from '@ably/chat';
@@ -64,10 +65,7 @@ onMounted(async () => {
   ablyRoom = await chatClient.rooms.get(props.room, {
     occupancy: { enableEvents: true },
   });
-  console.log(props.name);
-  console.log(props.room);
   ablyRoom.messages.subscribe((msgObject) => {
-    console.log('msg object ', msgObject);
     messages.value.push({
       ['client_id']: msgObject.message.clientId,
       text: msgObject.message.text,
@@ -77,6 +75,11 @@ onMounted(async () => {
   /** 💡 Attach to the room to subscribe to messages 💡 */
   await ablyRoom.attach();
 });
+
+onUpdated(() => {
+  const scrollableElement = document.getElementById('scrollable-container');
+  scrollableElement.scrollTop = scrollableElement.scrollHeight
+})
 
 //onBeforeUnmount(() => {
 // if (ablyRoom) {
@@ -95,5 +98,6 @@ function sendMessage() {
     name: props.name,
     message: newMessage.value,
   });
+  newMessage.value = '';
 }
 </script>

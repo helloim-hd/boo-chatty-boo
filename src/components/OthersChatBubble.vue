@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-[320px] self-end mb-3">
+  <div class="w-full max-w-[320px] self-end mb-2">
     <div class="">
       <span class="text-sm font-semibold text-gray-900 dark:text-white">{{
         name
