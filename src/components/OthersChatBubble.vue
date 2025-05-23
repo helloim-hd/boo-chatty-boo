@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-[320px] self-end mb-2">
-    <div class="">
+    <div v-if="showName()">
       <span class="text-sm font-semibold text-gray-900 dark:text-white">{{
         name
       }}</span>
@@ -16,8 +16,19 @@
 </template>
 
 <script setup>
+import {onMounted} from 'vue';
+
 const props = defineProps({
   message: String,
   name: String,
+  previousName: String
 });
+
+
+function showName() {
+  if (props.previousName == undefined) return true;
+  if (props.previousName) {
+    return props.name.trim() != props.previousName.trim();
+  }
+}
 </script>

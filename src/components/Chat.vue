@@ -1,10 +1,11 @@
 <template>
   <div class="m-6 absolute inset-x-0 bottom-0 h-16">
-    <div v-for="msg in messages" class="flex flex-col items-start">
+    <div v-for="(msg, index) in messages" class="flex flex-col items-start">
       <OthersChatBubble
         v-if="msg['client_id'].trim() !== name.trim()"
         :message="msg.text"
         :name="msg['client_id']"
+        :previousName="getPreviousName(index)"
       />
       <MyChatBubble v-else :message="msg.text" />
     </div>
@@ -99,5 +100,11 @@ function sendMessage() {
     message: newMessage.value,
   });
   newMessage.value = '';
+}
+
+function getPreviousName(index) {
+  if (index > 0) {
+    return messages.value[index - 1]['client_id'];
+  }
 }
 </script>

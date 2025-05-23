@@ -26,7 +26,6 @@ onMounted(() => {
 })
 
 function showRooms(value) {
-  // const rooms = await room.getRoomsByName(name.value);
   rooms.value = value.rooms;
   name.value = value.name;
 }

@@ -16,7 +16,6 @@
 
 <script setup>
 import { defineProps } from 'vue';
-//import { ChatClient, Room, AllFeaturesEnabled } from '@ably/chat';
 import ably from '../services/ably';
 
 const props = defineProps({
