@@ -48,6 +48,7 @@ import OthersChatBubble from './OthersChatBubble.vue';
 import { ChatClient } from '@ably/chat';
 import ablyService from '../services/ably';
 import roomService from '../services/room';
+import popSound from '../assets/pop.mp3';
 
 const newMessage = ref('');
 const messages = ref([]);
@@ -67,6 +68,8 @@ onMounted(async () => {
     occupancy: { enableEvents: true },
   });
   ablyRoom.messages.subscribe((msgObject) => {
+    const audio = new Audio(popSound);
+    audio.play();
     messages.value.push({
       ['client_id']: msgObject.message.clientId,
       text: msgObject.message.text,
