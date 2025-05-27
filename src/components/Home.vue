@@ -1,10 +1,11 @@
 <template>
   <div id="scrollable-container" class="m-6 w-full max-w-150 mx-auto flex flex-col relative h-180 overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
     <div v-if="page == 'main-page'">
-      <SearchRoomInput @show-rooms="showRooms" />
+      <SearchRoomInput @show-rooms="showRooms" /> 
       <Rooms :rooms="rooms" @select-room="selectRoom" />
     </div>
-    <Chat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" />
+    <!-- <Chat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" /> -->
+    <PaperChat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import room from '../services/room';
 import Rooms from './Rooms.vue';
 import SearchRoomInput from './SearchRoomInput.vue';
 import Chat from './Chat.vue';
+import PaperChat from './PaperChat.vue';
 
 const name = ref('');
 const rooms = ref([]);
