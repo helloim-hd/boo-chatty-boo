@@ -5,7 +5,8 @@
         <ul class="list" id="message-list">
             <li v-for="(msg, index) in messages">
                 <div v-if="msg['client_id'].trim() !== name.trim()" class="font-black text-purple-800 ml-12">
-                  {{ msg.text }}
+                  <span v-if="showName(index)" class="capitalize">{{ msg['client_id'] }}: </span>
+                  <span>{{ msg.text }}</span>
                 </div>
                 <div v-else class="ml-12">
                   {{ msg.text }}
@@ -62,12 +63,7 @@ onUpdated(() => {
 
   const lines = document.getElementById('lines');
   const list = document.getElementById('message-list');
-  let linesHeight = list.scrollHeight;
-
-  if (isOverflown(scrollableElement)) {
-    linesHeight = linesHeight;
-  } 
-  lines.style.height = `${linesHeight}px`;
+  lines.style.height = `${list.scrollHeight}px`;
 })
 
 function sendMessage() {
@@ -89,10 +85,15 @@ function getPreviousName(index) {
   if (index > 0) {
     return messages.value[index - 1]['client_id'];
   }
+  return '';
 }
 
 function isOverflown(element) {
   return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+}
+
+function showName(index) {
+  return getPreviousName(index).trim() != messages.value[index]['client_id'].trim();
 }
 </script>
 

@@ -3,7 +3,6 @@ import axios from 'axios';
 const getRoomsByName = async (name) => {
   try {
     const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/room?name=${name}`;
-    // const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/history?name=${name}`;
     const result = await axios.get(url);
     return result.data;
   } catch (error) {
