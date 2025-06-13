@@ -28,14 +28,14 @@
                 <div class="p-4 md:p-5">
                     <form class="space-y-4" action="#">
                         <div>
-                            <input placeholder="Name" type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                            <input v-model="name" placeholder="Name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                         </div>
                         <div>
-                            <input type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                            <input v-model="password" type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                         </div>
 
-                        <button v-if="isSignInModal()" type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
-                        <button v-else type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
+                        <button v-if="isSignInModal()" @click="signIn" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
+                        <button v-else @click="signUp" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
                         <div v-if="isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
                             Not registered? <a href="#" @click.prevent="loadSignUpModal" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
                         </div>
@@ -49,9 +49,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { Modal } from 'flowbite'
+import auth from '../services/auth';
 
 const modal = ref('');
 const modalType = ref('sign-in');
+const name = ref('');
+const password = ref('');
 
 onMounted(() => {
     const $buttonElement = document.querySelector('#button');
@@ -87,5 +90,15 @@ function isSignInModal() {
 
 function loadSignUpModal() {
     modalType.value = 'sign-up';
+}
+
+async function signUp() {
+    const signUp = await auth.signUp(name.value, password.value);
+}
+
+async function signIn() {
+    const signIn = await auth.signIn(name.value, password.value);
+    const session = await auth.getSession();
+    console.log(session)
 }
 </script>

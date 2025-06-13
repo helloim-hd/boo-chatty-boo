@@ -1,13 +1,29 @@
-<script setup>
-import Chat from './components/Chat.vue';
-import Home from './components/Home.vue';
-</script>
-
 <template>
   <div>
-    <Home />
+    <LoginModal v-if="!isSessionValid" />
+    <Home v-else />
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import Chat from './components/Chat.vue';
+import Home from './components/Home.vue';
+import LoginModal from './components/LoginModal.vue';
+import auth from './services/auth';
+
+const isSessionValid = ref(false);
+
+onMounted(async () => {
+  await getSession();
+})
+
+async function getSession() {
+  const session = await auth.getSession();
+  isSessionValid.value = session.success;
+  console.log(session)
+}
+</script>
 
 <style scoped>
 .logo {
