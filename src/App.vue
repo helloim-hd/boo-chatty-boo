@@ -11,11 +11,18 @@ import Chat from './components/Chat.vue';
 import Home from './components/Home.vue';
 import LoginModal from './components/LoginModal.vue';
 import auth from './services/auth';
+import { useCookies } from "vue3-cookies";
 
 const isSessionValid = ref(false);
+const token = ref('');
+
+const { cookies } = useCookies();
 
 onMounted(async () => {
-  await getSession();
+  // get token from cookies and send using req header authorisation with bearer
+  token.value = cookies.get('token');
+  console.log("token ", token.value)
+  await getSession(token.value);
 })
 
 async function getSession() {

@@ -50,11 +50,14 @@
 import { onMounted, ref } from 'vue'
 import { Modal } from 'flowbite'
 import auth from '../services/auth';
+import { useCookies } from "vue3-cookies";
 
 const modal = ref('');
 const modalType = ref('sign-in');
 const name = ref('');
 const password = ref('');
+
+const { cookies } = useCookies();
 
 onMounted(() => {
     const $buttonElement = document.querySelector('#button');
@@ -98,7 +101,9 @@ async function signUp() {
 
 async function signIn() {
     const signIn = await auth.signIn(name.value, password.value);
-    const session = await auth.getSession();
-    console.log(session)
+    console.log(cookies.get("CSRF-TOKEN"))
+    console.log(document.cookie)
+    cookies.set('token', signIn.token, '1d');
+    // const session = await auth.getSession();
 }
 </script>
