@@ -19,6 +19,8 @@ const token = ref('');
 onMounted(async () => {
   token.value = localStorage.getItem('token');
   await getSession();
+  console.log(token.value);
+  console.log(isSessionValid.value);
 })
 
 async function getSession(emittedToken = null) {

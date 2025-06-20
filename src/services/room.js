@@ -1,9 +1,14 @@
 import axios from 'axios';
 
-const getRoomsByName = async (name) => {
+const getRoomsByName = async (token) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/room?name=${name}`;
-    const result = await axios.get(url);
+    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/room`;
+    const result = await axios.get(url, 
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     return result.data;
   } catch (error) {
     console.log(error);

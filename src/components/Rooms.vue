@@ -1,5 +1,6 @@
 <template>
   <div class="m-2">
+    <div>This is a button to create room</div>
     <!-- <CreateRoomModal /> -->
     <div v-for="data in rooms">
       <div
