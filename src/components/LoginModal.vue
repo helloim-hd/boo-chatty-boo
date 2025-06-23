@@ -20,23 +20,22 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    <!-- <form class="space-y-4"> -->
-                        <div>
-                            <input v-model="name" placeholder="Name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                        </div>
-                        <div>
-                            <input v-model="password" type="password" name="password" id="password" placeholder="Password" @keyup.enter="handleKeyUpEnter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                        </div>
+                    <div v-if="loginMessage">{{ loginMessage }}</div>
+                    <div>
+                        <input v-model="name" placeholder="Name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                    </div>
+                    <div>
+                        <input v-model="password" type="password" name="password" id="password" placeholder="Password" @keyup.enter="handleKeyUpEnter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                    </div>
 
-                        <button v-if="isSignInModal()" @click="signIn" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
-                        <button v-else @click="signUp" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
-                        <div v-if="isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                            Not registered? <a href="#" @click.prevent="loadSignUpModal" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
-                        </div>
-                        <div v-if="!isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                            Already have an account? <a href="#" @click.prevent="loadSignInModal" class="text-blue-700 hover:underline dark:text-blue-500">Sign In</a>
-                        </div>
-                    <!-- </form> -->
+                    <button v-if="isSignInModal()" @click="signIn" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
+                    <button v-else @click="signUp" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
+                    <div v-if="isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                        Not registered? <a href="#" @click.prevent="loadSignUpModal" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
+                    </div>
+                    <div v-if="!isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                        Already have an account? <a href="#" @click.prevent="loadSignInModal" class="text-blue-700 hover:underline dark:text-blue-500">Sign In</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,6 +51,7 @@ const modal = ref('');
 const modalType = ref('sign-in');
 const name = ref('');
 const password = ref('');
+const loginMessage = ref('');
 const emit = defineEmits(['updateSession']);
 
 onMounted(() => {
@@ -66,8 +66,14 @@ onMounted(() => {
   
 })
 
+function resetLoginDetails() {
+    name.value = '';
+    password.value = '';
+}
+
 function toggleModal() {
     modal.value.toggle();
+    resetLoginDetails();
 }
 
 function isSignInModal() {
@@ -75,10 +81,12 @@ function isSignInModal() {
 }
 
 function loadSignUpModal() {
+    resetLoginDetails();
     modalType.value = 'sign-up';
 }
 
 function loadSignInModal() {
+    resetLoginDetails();
     modalType.value = 'sign-in';
 }
 
@@ -91,9 +99,12 @@ async function signUp() {
 
 async function signIn() {
     const signIn = await auth.signIn(name.value, password.value);
-    localStorage.setItem('token', signIn.token);
-    toggleModal();
-    emit('updateSession', signIn.token);
+    if (!signIn.success) loginMessage.value = 'Invalid login credentials';
+    else {
+        localStorage.setItem('token', signIn.token);
+        toggleModal();
+        emit('updateSession', signIn.token);
+    }
 }
 
 async function handleKeyUpEnter() {

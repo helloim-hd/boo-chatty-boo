@@ -8,7 +8,7 @@
                   <span v-if="showName(index)" class="capitalize">{{ msg['client_id'] }}: </span>
                   <span>{{ msg.text }}</span>
                 </div>
-                <div v-else class="ml-12">
+                <div v-else :style="{'color': msg.colour}" class="ml-12">
                   {{ msg.text }}
                 </div>
             </li>
@@ -38,17 +38,20 @@ let chatClient, ablyRoom;
 
 onMounted(async () => {
   messages.value = await roomService.getHistoryByRoom(props.selectedRoom.room);
+  console.log(messages.value)
 
   chatClient = new ChatClient(ablyService.connectToAbly(props.selectedRoom.name));
   ablyRoom = await chatClient.rooms.get(props.selectedRoom.room, {
     occupancy: { enableEvents: true },
   });
+  
   ablyRoom.messages.subscribe((msgObject) => {
     const audio = new Audio(popSound);
     audio.play();
     messages.value.push({
       ['client_id']: msgObject.message.clientId,
       text: msgObject.message.text,
+      colour: props.selectedRoom['font_colour']
     });
   });
 
@@ -66,10 +69,6 @@ onUpdated(() => {
 })
 
 function sendMessage() {
-  const messageData = {
-    name: name.value,
-    message: newMessage.value,
-  };
   ablyRoom.messages.send({ text: newMessage.value });
   roomService.saveMessage({
     room: props.selectedRoom.room,
