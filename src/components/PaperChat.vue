@@ -77,7 +77,7 @@ function sendMessage() {
     room: props.selectedRoom.room,
     name: props.selectedRoom.name,
     message: newMessage.value,
-    color: props.selectedRoom['font_colour']
+    colour: props.selectedRoom['font_colour']
   });
   newMessage.value = '';
 }
@@ -87,10 +87,6 @@ function getPreviousName(index) {
     return messages.value[index - 1]['client_id'];
   }
   return '';
-}
-
-function isOverflown(element) {
-  return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
 }
 
 function showName(index) {
