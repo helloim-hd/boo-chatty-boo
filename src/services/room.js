@@ -35,8 +35,15 @@ const saveMessage = async (data) => {
   }
 };
 
+const getUserColour = async (name) => {
+  const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/user-colour?name=${name}`;
+  const result = await axios.get(url);
+  return result.data;
+}
+
 export default {
   getRoomsByName,
   getHistoryByRoom,
   saveMessage,
+  getUserColour
 };

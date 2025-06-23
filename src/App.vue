@@ -8,7 +8,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Chat from './components/Chat.vue';
 import Home from './components/Home.vue';
 import LoginModal from './components/LoginModal.vue';
 import auth from './services/auth';
@@ -19,8 +18,6 @@ const token = ref('');
 onMounted(async () => {
   token.value = localStorage.getItem('token');
   await getSession();
-  console.log(token.value);
-  console.log(isSessionValid.value);
 })
 
 async function getSession(emittedToken = null) {

@@ -5,27 +5,25 @@
       <Rooms :rooms="rooms" @select-room="selectRoom" />
     </div>
     <!-- <Chat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" /> -->
-    <PaperChat v-else-if="page == 'chat-page'" :room="selectedRoom" :name="name" />
+    <PaperChat v-else-if="page == 'chat-page'" :selectedRoom="selectedRoom" :name="name" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { FwbInput } from 'flowbite-vue';
 import roomService from '../services/room';
 import Rooms from './Rooms.vue';
-import SearchRoomInput from './SearchRoomInput.vue';
-import Chat from './Chat.vue';
 import PaperChat from './PaperChat.vue';
 
 const name = ref('');
 const rooms = ref([]);
-const selectedRoom = ref('');
+const selectedRoom = ref({});
 const page = ref('main-page');
 
 onMounted(async () => {
   const token = localStorage.getItem('token');
   rooms.value = await roomService.getRoomsByName(token);
+  console.log("rooms ", rooms.value)
 })
 
 function showRooms(value) {

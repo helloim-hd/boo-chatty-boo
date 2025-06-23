@@ -4,7 +4,7 @@
 
         <ul class="list" id="message-list">
             <li v-for="(msg, index) in messages">
-                <div v-if="msg['client_id'].trim() !== name.trim()" class="font-black text-purple-800 ml-12">
+                <div v-if="msg['client_id'].trim() !== selectedRoom.name.trim()" :class="getMessageClass(msg.colour)" class="font-black ml-12">
                   <span v-if="showName(index)" class="capitalize">{{ msg['client_id'] }}: </span>
                   <span>{{ msg.text }}</span>
                 </div>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, onUpdated } from 'vue';
+import { ref, onMounted, onUpdated } from 'vue';
 import { ChatClient } from '@ably/chat';
 import ablyService from '../services/ably';
 import roomService from '../services/room';
@@ -30,18 +30,19 @@ import popSound from '../assets/pop.mp3';
 const newMessage = ref('');
 const messages = ref([]);
 
+const fontColour = ref('');
+
 const props = defineProps({
-  room: String,
-  name: String,
+  selectedRoom: Object
 });
 
 let chatClient, ablyRoom;
 
 onMounted(async () => {
-  messages.value = await roomService.getHistoryByRoom(props.room);
+  messages.value = await roomService.getHistoryByRoom(props.selectedRoom.room);
 
-  chatClient = new ChatClient(ablyService.connectToAbly(props.name));
-  ablyRoom = await chatClient.rooms.get(props.room, {
+  chatClient = new ChatClient(ablyService.connectToAbly(props.selectedRoom.name));
+  ablyRoom = await chatClient.rooms.get(props.selectedRoom.room, {
     occupancy: { enableEvents: true },
   });
   ablyRoom.messages.subscribe((msgObject) => {
@@ -67,16 +68,16 @@ onUpdated(() => {
 })
 
 function sendMessage() {
-  console.log("hello")
   const messageData = {
     name: name.value,
     message: newMessage.value,
   };
   ablyRoom.messages.send({ text: newMessage.value });
   roomService.saveMessage({
-    room: props.room,
-    name: props.name,
+    room: props.selectedRoom.room,
+    name: props.selectedRoom.name,
     message: newMessage.value,
+    color: props.selectedRoom['font_colour']
   });
   newMessage.value = '';
 }
@@ -94,6 +95,10 @@ function isOverflown(element) {
 
 function showName(index) {
   return getPreviousName(index).trim() != messages.value[index]['client_id'].trim();
+}
+
+function getMessageClass(colour) {
+  return [`text-${colour}-800`];
 }
 </script>
 
