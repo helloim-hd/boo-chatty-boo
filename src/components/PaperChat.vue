@@ -4,7 +4,7 @@
 
         <ul class="list" id="message-list">
             <li v-for="(msg, index) in messages">
-                <div v-if="msg['client_id'].trim() !== selectedRoom.name.trim()" :class="getMessageClass(msg.colour)" class="font-black ml-12">
+                <div v-if="msg['client_id'].trim() !== selectedRoom.name.trim()" :style="{'color': msg.colour}" class="font-black ml-12">
                   <span v-if="showName(index)" class="capitalize">{{ msg['client_id'] }}: </span>
                   <span>{{ msg.text }}</span>
                 </div>
@@ -29,8 +29,6 @@ import popSound from '../assets/pop.mp3';
 
 const newMessage = ref('');
 const messages = ref([]);
-
-const fontColour = ref('');
 
 const props = defineProps({
   selectedRoom: Object
@@ -91,10 +89,6 @@ function getPreviousName(index) {
 
 function showName(index) {
   return getPreviousName(index).trim() != messages.value[index]['client_id'].trim();
-}
-
-function getMessageClass(colour) {
-  return [`text-${colour}-800`];
 }
 </script>
 

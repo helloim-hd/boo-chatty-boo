@@ -17,21 +17,15 @@
                     <h3 v-else class="text-xl font-semibold text-gray-900 dark:text-white">
                         Sign Up 
                     </h3>
-                    <!-- <button @click="toggleModal" type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button> -->
                 </div>
                 <!-- Modal body -->
-                <div class="p-4 md:p-5">
-                    <form class="space-y-4" action="#">
+                <div class="p-4 md:p-5 space-y-4">
+                    <!-- <form class="space-y-4"> -->
                         <div>
                             <input v-model="name" placeholder="Name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                         </div>
                         <div>
-                            <input v-model="password" type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                            <input v-model="password" type="password" name="password" id="password" placeholder="Password" @keyup.enter="handleKeyUpEnter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                         </div>
 
                         <button v-if="isSignInModal()" @click="signIn" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
@@ -42,7 +36,7 @@
                         <div v-if="!isSignInModal()" class="text-sm font-medium text-gray-500 dark:text-gray-300">
                             Already have an account? <a href="#" @click.prevent="loadSignInModal" class="text-blue-700 hover:underline dark:text-blue-500">Sign In</a>
                         </div>
-                    </form>
+                    <!-- </form> -->
                 </div>
             </div>
         </div>
@@ -76,15 +70,6 @@ function toggleModal() {
     modal.value.toggle();
 }
 
-function closeModal() {
-    modal.value.hide();
-}
-
-function openModal() {
-    console.log("here");
-    modal.value.toggle();
-}
-
 function isSignInModal() {
     return modalType.value == 'sign-in';
 }
@@ -99,13 +84,21 @@ function loadSignInModal() {
 
 async function signUp() {
     const signUp = await auth.signUp(name.value, password.value);
+    localStorage.setItem('token', signUp.token);
+    toggleModal();
+    emit('updateSession', signUp.token);
 }
 
 async function signIn() {
     const signIn = await auth.signIn(name.value, password.value);
     localStorage.setItem('token', signIn.token);
     toggleModal();
-    // send data to app that its been logged in
     emit('updateSession', signIn.token);
+}
+
+async function handleKeyUpEnter() {
+    if (name.value && password.value) {
+        isSignInModal() ? await signIn() : await signUp();
+    }
 }
 </script>
