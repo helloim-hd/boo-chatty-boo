@@ -26,6 +26,7 @@ import { ChatClient } from '@ably/chat';
 import ablyService from '../services/ably';
 import roomService from '../services/room';
 import popSound from '../assets/pop.mp3';
+import ably from '../services/ably';
 
 const newMessage = ref('');
 const messages = ref([]);
@@ -38,7 +39,6 @@ let chatClient, ablyRoom;
 
 onMounted(async () => {
   messages.value = await roomService.getHistoryByRoom(props.selectedRoom.room);
-  console.log(messages.value)
 
   chatClient = new ChatClient(ablyService.connectToAbly(props.selectedRoom.name));
   ablyRoom = await chatClient.rooms.get(props.selectedRoom.room, {
@@ -51,7 +51,7 @@ onMounted(async () => {
     messages.value.push({
       ['client_id']: msgObject.message.clientId,
       text: msgObject.message.text,
-      colour: props.selectedRoom['font_colour']
+      colour: msgObject.message.headers.colour
     });
   });
 
@@ -69,7 +69,7 @@ onUpdated(() => {
 })
 
 function sendMessage() {
-  ablyRoom.messages.send({ text: newMessage.value });
+  ablyRoom.messages.send({ text: newMessage.value, headers: {colour: props.selectedRoom['font_colour']} });
   roomService.saveMessage({
     room: props.selectedRoom.room,
     name: props.selectedRoom.name,

@@ -23,7 +23,6 @@ const page = ref('main-page');
 onMounted(async () => {
   const token = localStorage.getItem('token');
   rooms.value = await roomService.getRoomsByName(token);
-  console.log("rooms ", rooms.value)
 })
 
 function showRooms(value) {
