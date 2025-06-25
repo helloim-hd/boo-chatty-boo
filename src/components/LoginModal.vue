@@ -93,6 +93,7 @@ function loadSignInModal() {
 async function signUp() {
     const signUp = await auth.signUp(name.value, password.value);
     localStorage.setItem('token', signUp.token);
+    localStorage.setItem('name', name.value);
     toggleModal();
     emit('updateSession', signUp.token);
 }
@@ -102,6 +103,7 @@ async function signIn() {
     if (!signIn.success) loginMessage.value = 'Invalid login credentials';
     else {
         localStorage.setItem('token', signIn.token);
+        localStorage.setItem('name', name.value);
         toggleModal();
         emit('updateSession', signIn.token);
     }

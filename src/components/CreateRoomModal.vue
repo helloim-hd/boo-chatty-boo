@@ -9,7 +9,12 @@
             </div>
             </template>
             <template #body>
-                <input type="text" placeholder="Room" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <div class="mb-4">
+                    <input v-model="roomName" type="text" placeholder="Room" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                </div>
+                <div>
+                    <NameList />
+                </div>
             </template>
             <template #footer>
             <div class="flex justify-between">
@@ -28,6 +33,7 @@
 <script setup>
 import { ref } from 'vue';
 import { FwbButton, FwbModal } from 'flowbite-vue'
+import NameList from './NameList.vue';
 
 const isShowModal = ref(false);
 
