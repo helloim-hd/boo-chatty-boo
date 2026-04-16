@@ -69,6 +69,7 @@ onMounted(() => {
 function resetLoginDetails() {
     name.value = '';
     password.value = '';
+    loginMessage.value = '';
 }
 
 function toggleModal() {
