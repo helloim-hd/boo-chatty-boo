@@ -1,7 +1,7 @@
 <template>
   <div class="m-2">
     <RoomsHeader />
-    <!-- <CreateRoomModal /> -->
+    <CreateRoomModal />
     <div v-for="data in rooms">
       <div
         href="#"

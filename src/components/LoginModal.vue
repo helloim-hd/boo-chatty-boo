@@ -69,6 +69,7 @@ onMounted(() => {
 function resetLoginDetails() {
     name.value = '';
     password.value = '';
+    loginMessage.value = '';
 }
 
 function toggleModal() {
@@ -100,8 +101,12 @@ async function signUp() {
 
 async function signIn() {
     const signIn = await auth.signIn(name.value, password.value);
-    if (!signIn.success) loginMessage.value = 'Invalid login credentials';
-    else {
+    if (!signIn.success && signIn.message == 'Incorrect password') {
+        loginMessage.value = 'Invalid login credentials';
+    } else if (!signIn.success && signIn.message == 'User does not exist') {
+        loginMessage.value = 'User is not registered'
+    } else {
+        console.log(signIn)
         localStorage.setItem('token', signIn.token);
         localStorage.setItem('name', name.value);
         toggleModal();
