@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const getRoomsByName = async (token) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/room`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/rooms`;
     const result = await axios.get(url, 
       {
         headers: {
@@ -41,9 +41,16 @@ const getUserColour = async (name) => {
   return result.data;
 }
 
+const createRoom = async (data) => {
+  const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/rooms`;
+  const result = await axios.post(url, data);
+  return result.data;
+}
+
 export default {
   getRoomsByName,
   getHistoryByRoom,
   saveMessage,
-  getUserColour
+  getUserColour,
+  createRoom
 };

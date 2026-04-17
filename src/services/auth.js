@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const getSession = async (token) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/session`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/users/session`;
     const result = await axios.get(url, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -17,7 +17,7 @@ const getSession = async (token) => {
 
 const signUp = async (name, password) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/signup`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/users/signup`;
     const result = await axios.post(url, {name, password});
     return result.data;
   } catch (error) {
@@ -27,11 +27,15 @@ const signUp = async (name, password) => {
 
 const signIn = async (name, password) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/signin`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/users/signin`;
     const result = await axios.post(url, {name, password});
     return result.data;
   } catch (error) {
-    console.log(error);
+    console.log(error.response.data)
+    return {
+      success: false, 
+      message: error.response.data.message
+    }
   }
 };
 

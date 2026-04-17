@@ -19,13 +19,17 @@
             </template>
             <template #footer>
             <div class="flex justify-between">
-                <fwb-button @click="closeModal" color="alternative">
+                <fwb-button 
+                    @click="closeModal" 
+                    color="alternative"
+                    class="focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                >
                     Close
                 </fwb-button>
                 <fwb-button 
                     :disabled="isConfirmDisabled()" 
                     color="purple"
-                    class="disabled:bg-gray-300"
+                    class="disabled:bg-gray-300 cursor-pointer"
                     @click="createRoom"
                 >
                     Create Room
@@ -41,6 +45,7 @@ import { ref, onMounted, watch } from 'vue';
 import { FwbButton, FwbModal } from 'flowbite-vue'
 import NameList from './NameList.vue';
 import userService from '../services/user';
+import roomService from '../services/room';
 
 const isShowModal = ref(false);
 const users = ref([]);
@@ -81,7 +86,13 @@ function isConfirmDisabled() {
     return addedUsers.value.length === 0 || !roomName.value;
 }
 
-function createRoom() {
-    
+async function createRoom() {
+    const user = users.value.find(u => u.name === name.value); 
+    addedUsers.value.push(user);
+    await roomService.createRoom({
+        room: roomName.value,
+        users: addedUsers.value
+    })
+    closeModal();
 }
 </script>
