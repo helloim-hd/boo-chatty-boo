@@ -20,7 +20,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    <div v-if="loginMessage">{{ loginMessage }}</div>
+                    <div v-if="authStore.loginMessage">{{ authStore.loginMessage }}</div>
                     <div>
                         <input v-model="name" placeholder="Name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                     </div>
@@ -43,15 +43,19 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { Modal } from 'flowbite'
+import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { Modal } from 'flowbite';
+import { useAuthStore } from '../stores/auth';
 import auth from '../services/auth';
+
+const authStore = useAuthStore();
 
 const modal = ref('');
 const modalType = ref('sign-in');
 const name = ref('');
 const password = ref('');
-const loginMessage = ref('');
+// const loginMessage = ref('');
 const emit = defineEmits(['updateSession']);
 
 onMounted(() => {
@@ -69,7 +73,7 @@ onMounted(() => {
 function resetLoginDetails() {
     name.value = '';
     password.value = '';
-    loginMessage.value = '';
+    authStore.loginMessage = '';
 }
 
 function toggleModal() {
@@ -100,18 +104,24 @@ async function signUp() {
 }
 
 async function signIn() {
-    const signIn = await auth.signIn(name.value, password.value);
-    if (!signIn.success && signIn.message == 'Incorrect password') {
-        loginMessage.value = 'Invalid login credentials';
-    } else if (!signIn.success && signIn.message == 'User does not exist') {
-        loginMessage.value = 'User is not registered'
-    } else {
-        console.log(signIn)
-        localStorage.setItem('token', signIn.token);
-        localStorage.setItem('name', name.value);
+    await authStore.signIn(name.value, password.value);
+    if (!authStore.loginMessage) {
         toggleModal();
-        emit('updateSession', signIn.token);
+        emit('updateSession', authStore.token);
     }
+    
+
+    // const signIn = await auth.signIn(name.value, password.value);
+    // if (!signIn.success && signIn.message == 'Incorrect password') {
+    //     loginMessage.value = 'Invalid login credentials';
+    // } else if (!signIn.success && signIn.message == 'User does not exist') {
+    //     loginMessage.value = 'User is not registered'
+    // } else {
+    //     localStorage.setItem('token', signIn.token);
+    //     localStorage.setItem('name', name.value);
+    //     toggleModal();
+    //     emit('updateSession', signIn.token);
+    // }
 }
 
 async function handleKeyUpEnter() {

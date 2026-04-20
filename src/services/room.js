@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const getRoomsByName = async (token) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND_URL}/api/rooms`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND}/api/rooms`;
     const result = await axios.get(url, 
       {
         headers: {

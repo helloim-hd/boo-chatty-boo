@@ -1,31 +1,23 @@
 <template>
   <div>
-    <div v-if="isSessionValid == null"></div>
-    <LoginModal v-else-if="isSessionValid == false" @update-session="getSession"/>
-    <Home v-else-if="isSessionValid == true" />
+    <div v-if="authStore.isAuthenticated == null"></div>
+    <LoginModal v-else-if="authStore.isAuthenticated == false" @update-session="getSession"/>
+    <Home v-else-if="authStore.isAuthenticated == true" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from './stores/auth'; 
 import Home from './components/Home.vue';
 import LoginModal from './components/LoginModal.vue';
 import auth from './services/auth';
 
-const isSessionValid = ref(null);
-const token = ref('');
+const authStore = useAuthStore();
 
 onMounted(async () => {
-  token.value = localStorage.getItem('token');
-  await getSession();
+  await authStore.checkSession();
 })
-
-async function getSession(emittedToken = null) {
-  let currentToken = token.value;
-  if (emittedToken) currentToken = emittedToken;
-  const session = await auth.getSession(currentToken);
-  isSessionValid.value = session.success;
-}
 </script>
 
 <style scoped>
