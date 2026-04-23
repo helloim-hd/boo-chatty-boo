@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import auth from '../services/auth.js';
+import { useLocalStorage } from '@vueuse/core';
 
 export const useAuthStore = defineStore('auth', () => {
-    const userName = ref('');
     const loginMessage = ref('');
-    const token = ref(localStorage.getItem('token') || null);
+    const username = useLocalStorage('username', null);
+    const token = useLocalStorage('token', null);
     const isAuthenticated = ref(null);
 
     const checkSession = async () => {
         try {
-            console.log(token.value)
             const result = await auth.getSession(token.value);
             isAuthenticated.value = true;
         } catch (err) {
@@ -22,7 +22,11 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const signIn = await auth.signIn(name, password);
             token.value = signIn.token;
-            localStorage.setItem('token', signIn.token);
+            username.value = name;
+            // localStorage.setItem('token', signIn.token);
+            token.value = signIn.token;
+            localStorage.setItem('username', name);
+            isAuthenticated.value = true;
 
         } catch (err) {
             if (err.message == 'Incorrect password') {
@@ -40,20 +44,27 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const signUp = await auth.signUp(name, password);
             token.value = signUp.token;
+            username.value = name;
             localStorage.setItem('token', signUp.token);
+            localStorage.setItem('username', name);
+            isAuthenticated.value = true;
 
+            return true;
         } catch (err) {
             //handle sign up error 
+            return false;
         }
     }
 
 
 
     return { 
-        userName, 
+        token,
+        username, 
         isAuthenticated, 
         checkSession, 
         signIn, 
-        loginMessage 
+        signUp,
+        loginMessage
     }
 })

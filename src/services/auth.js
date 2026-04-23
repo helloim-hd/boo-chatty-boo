@@ -40,7 +40,6 @@ const throwErrorMessage = error => {
   if (error.response.data) {
     errMessage = error.response.data.message;
   }
-  console.log("throwing error ", errMessage)
   throw new Error(errMessage);
 }
 

@@ -55,7 +55,6 @@ const modal = ref('');
 const modalType = ref('sign-in');
 const name = ref('');
 const password = ref('');
-// const loginMessage = ref('');
 const emit = defineEmits(['updateSession']);
 
 onMounted(() => {
@@ -96,32 +95,18 @@ function loadSignInModal() {
 }
 
 async function signUp() {
-    const signUp = await auth.signUp(name.value, password.value);
-    localStorage.setItem('token', signUp.token);
-    localStorage.setItem('name', name.value);
-    toggleModal();
-    emit('updateSession', signUp.token);
+    const signUp = await authStore.signUp(name.value, password.value);
+    if (signUp) {
+        toggleModal();
+    }
+    
 }
 
 async function signIn() {
     await authStore.signIn(name.value, password.value);
     if (!authStore.loginMessage) {
         toggleModal();
-        emit('updateSession', authStore.token);
     }
-    
-
-    // const signIn = await auth.signIn(name.value, password.value);
-    // if (!signIn.success && signIn.message == 'Incorrect password') {
-    //     loginMessage.value = 'Invalid login credentials';
-    // } else if (!signIn.success && signIn.message == 'User does not exist') {
-    //     loginMessage.value = 'User is not registered'
-    // } else {
-    //     localStorage.setItem('token', signIn.token);
-    //     localStorage.setItem('name', name.value);
-    //     toggleModal();
-    //     emit('updateSession', signIn.token);
-    // }
 }
 
 async function handleKeyUpEnter() {

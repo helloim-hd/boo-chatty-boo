@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="authStore.isAuthenticated == null"></div>
-    <LoginModal v-else-if="authStore.isAuthenticated == false" @update-session="getSession"/>
+    <LoginModal v-else-if="authStore.isAuthenticated == false"/>
     <Home v-else-if="authStore.isAuthenticated == true" />
   </div>
 </template>
@@ -11,7 +11,6 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from './stores/auth'; 
 import Home from './components/Home.vue';
 import LoginModal from './components/LoginModal.vue';
-import auth from './services/auth';
 
 const authStore = useAuthStore();
 

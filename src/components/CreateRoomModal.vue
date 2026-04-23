@@ -9,7 +9,7 @@
                 </div>
                 <div>
                     <NameList 
-                        :current-user-name="name"
+                        :current-user-name="authStore.username"
                         :users="users"
                         :added-users="addedUsers"   
                         @add-user="addUser"
@@ -36,28 +36,28 @@
                 </fwb-button>
             </div>
             </template>
-        </fwb-modal>  
+        </fwb-modal>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { FwbButton, FwbModal } from 'flowbite-vue'
+import { FwbButton, FwbModal, FwbToast } from 'flowbite-vue';
+import { useAuthStore } from '../stores/auth';
 import NameList from './NameList.vue';
 import userService from '../services/user';
 import roomService from '../services/room';
 
+const authStore = useAuthStore();
 const isShowModal = ref(false);
 const users = ref([]);
-const name = ref('');
 const addedUsers = ref([]);
 const roomName = ref('');
+const isError = ref(null);
 
 onMounted(async () => {
-    const token = localStorage.getItem('token');
     // TODO: refactor to put information in pinia? or local component is enough?
-    name.value = localStorage.getItem('name');
-    users.value = await userService.getUsers(token);
+    users.value = await userService.getUsers(authStore.token);
 })
 
 watch([roomName, addedUsers], () => {
@@ -87,12 +87,18 @@ function isConfirmDisabled() {
 }
 
 async function createRoom() {
-    const user = users.value.find(u => u.name === name.value); 
-    addedUsers.value.push(user);
-    await roomService.createRoom({
-        room: roomName.value,
-        users: addedUsers.value
-    })
-    closeModal();
+    try {
+        const user = users.value.find(u => u.name === authStore.username); 
+        await roomService.createRoom({
+            room: roomName.value,
+            users: addedUsers.value,
+            currentUser: user
+        })
+        closeModal();
+        
+    } catch (err) {
+        isError.value = true;
+    }
+    
 }
 </script>

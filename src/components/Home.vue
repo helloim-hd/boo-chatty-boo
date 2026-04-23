@@ -10,24 +10,25 @@
 </template>
 
 <script setup>
+import { FwbAlert } from 'flowbite-vue'
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from '../stores/auth';
 import roomService from '../services/room';
 import Rooms from './Rooms.vue';
 import PaperChat from './PaperChat.vue';
 
-const name = ref('');
+const authStore = useAuthStore();
 const rooms = ref([]);
 const selectedRoom = ref({});
 const page = ref('main-page');
 
 onMounted(async () => {
-  const token = localStorage.getItem('token');
-  rooms.value = await roomService.getRoomsByName(token);
+  rooms.value = await roomService.getRoomsByName(authStore.token);
 })
 
 function showRooms(value) {
   rooms.value = value.rooms;
-  name.value = value.name;
+  authStore.username = value.name;
 }
 
 function selectRoom(value) {

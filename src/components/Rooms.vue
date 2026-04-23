@@ -11,7 +11,7 @@
         <h5
           class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
         >
-          {{ data.room }}
+        {{  data.room  }}
         </h5>
       </div>
     </div>

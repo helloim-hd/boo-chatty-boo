@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ably/chat": "^0.7.0",
+    "@vueuse/core": "^14.2.1",
     "ably": "^2.9.0",
     "axios": "^1.9.0",
     "flowbite": "^3.1.2",
@@ -19,9 +20,11 @@
     "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.3",
     "@tailwindcss/vite": "^4.1.7",
     "@vitejs/plugin-vue": "^5.2.4",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.10",
     "tailwindcss": "^4.1.7",
     "vite": "^6.3.5"
   }
