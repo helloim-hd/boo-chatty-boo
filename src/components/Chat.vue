@@ -61,7 +61,7 @@ const props = defineProps({
 let chatClient, ablyRoom;
 
 onMounted(async () => {
-  messages.value = await roomService.getHistoryByRoom(props.room);
+  messages.value = await roomService.getMessagesByRoom(props.room);
 
   chatClient = new ChatClient(ablyService.connectToAbly(props.name));
   ablyRoom = await chatClient.rooms.get(props.room, {

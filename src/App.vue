@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div v-if="authStore.isAuthenticated == null"></div>
+    <div v-if="authStore.isAuthenticated == null">Loading...</div>
     <LoginModal v-else-if="authStore.isAuthenticated == false"/>
     <Home v-else-if="authStore.isAuthenticated == true" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useAuthStore } from './stores/auth'; 
 import Home from './components/Home.vue';
 import LoginModal from './components/LoginModal.vue';
@@ -16,7 +16,6 @@ const authStore = useAuthStore();
 
 onMounted(async () => {
   await authStore.checkSession();
-  console.log("is authenticated ", authStore.isAuthenticated)
 })
 </script>
 

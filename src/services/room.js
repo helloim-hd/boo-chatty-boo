@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '../stores/auth';
 
 const getRoomsByName = async (token) => {
   try {
@@ -15,11 +16,17 @@ const getRoomsByName = async (token) => {
   }
 };
 
-const getHistoryByRoom = async (room) => {
+const getMessagesByRoom = async (room) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND}/history?room=${room}`;
-    const result = await axios.get(url);
-    return result.data.history;
+    const authStore = useAuthStore();
+    const url = `${import.meta.env.VITE_CHAT_BACKEND}/api/messages?room=${room}`;
+    const result = await axios.get(url, 
+      {
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`
+        }
+      });
+    return result.data.data.history;
   } catch (error) {
     console.log(error);
   }
@@ -27,7 +34,7 @@ const getHistoryByRoom = async (room) => {
 
 const saveMessage = async (data) => {
   try {
-    const url = `${import.meta.env.VITE_CHAT_BACKEND}/message`;
+    const url = `${import.meta.env.VITE_CHAT_BACKEND}/api/messages`;
     const result = await axios.post(url, data);
     return result.data;
   } catch (error) {
@@ -49,7 +56,7 @@ const createRoom = async (data) => {
 
 export default {
   getRoomsByName,
-  getHistoryByRoom,
+  getMessagesByRoom,
   saveMessage,
   getUserColour,
   createRoom
