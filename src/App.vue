@@ -16,6 +16,7 @@ const authStore = useAuthStore();
 
 onMounted(async () => {
   await authStore.checkSession();
+  console.log("is authenticated ", authStore.isAuthenticated)
 })
 </script>
 

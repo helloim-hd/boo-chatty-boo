@@ -95,8 +95,8 @@ function loadSignInModal() {
 }
 
 async function signUp() {
-    const signUp = await authStore.signUp(name.value, password.value);
-    if (signUp) {
+    await authStore.signUp(name.value, password.value);
+    if (authStore.isAuthenticated) {
         toggleModal();
     }
     
@@ -104,7 +104,7 @@ async function signUp() {
 
 async function signIn() {
     await authStore.signIn(name.value, password.value);
-    if (!authStore.loginMessage) {
+    if (authStore.isAuthenticated) {
         toggleModal();
     }
 }
