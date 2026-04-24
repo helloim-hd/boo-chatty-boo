@@ -2,7 +2,7 @@
   <div class="m-6 absolute inset-x-0 bottom-0 h-16">
     <div v-for="(msg, index) in messages" class="flex flex-col items-start">
       <OthersChatBubble
-        v-if="msg['client_id'].trim() !== name.trim()"
+        v-if="msg['client_id'].trim() !== authStore.username.trim()"
         :message="msg.text"
         :name="msg['client_id']"
         :previousName="getPreviousName(index)"
@@ -38,11 +38,15 @@
         </svg>
       </button>
     </div>
+    <button @click="$emit('goBackToRoomList')" type="button" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 cursor-pointer">
+      Back 
+    </button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, onUpdated } from 'vue';
+import { ref, onMounted, onBeforeUnmount, onUpdated, defineEmits } from 'vue';
+import { useAuthStore } from '../stores/auth';
 import MyChatBubble from './MyChatBubble.vue';
 import OthersChatBubble from './OthersChatBubble.vue';
 import { ChatClient } from '@ably/chat';
@@ -50,23 +54,26 @@ import ablyService from '../services/ably';
 import roomService from '../services/room';
 import popSound from '../assets/pop.mp3';
 
+const authStore = useAuthStore();
 const newMessage = ref('');
 const messages = ref([]);
 
 const props = defineProps({
-  room: String,
-  name: String,
+  selectedRoom: Object
 });
+
+const emit = defineEmits(['goBackToRoomList']);
 
 let chatClient, ablyRoom;
 
 onMounted(async () => {
-  messages.value = await roomService.getMessagesByRoom(props.room);
+  messages.value = await roomService.getMessagesByRoom(props.selectedRoom.room);
 
-  chatClient = new ChatClient(ablyService.connectToAbly(props.name));
-  ablyRoom = await chatClient.rooms.get(props.room, {
+  chatClient = new ChatClient(ablyService.connectToAbly(props.selectedRoom.name));
+  ablyRoom = await chatClient.rooms.get(props.selectedRoom.room, {
     occupancy: { enableEvents: true },
   });
+  console.log("its ably room ", ablyRoom)
   ablyRoom.messages.subscribe((msgObject) => {
     const audio = new Audio(popSound);
     audio.play();
@@ -92,14 +99,11 @@ onUpdated(() => {
 // });
 
 function sendMessage() {
-  const messageData = {
-    name: name.value,
-    message: newMessage.value,
-  };
+  console.log(ablyRoom.messages)
   ablyRoom.messages.send({ text: newMessage.value });
   roomService.saveMessage({
-    room: props.room,
-    name: props.name,
+    room: props.selectedRoom.room,
+    name: props.selectedRoom.name,
     message: newMessage.value,
   });
   newMessage.value = '';

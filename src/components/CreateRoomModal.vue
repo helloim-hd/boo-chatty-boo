@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, defineEmits } from 'vue';
 import { FwbButton, FwbModal, FwbToast } from 'flowbite-vue';
 import { useAuthStore } from '../stores/auth';
 import NameList from './NameList.vue';
@@ -54,6 +54,9 @@ const users = ref([]);
 const addedUsers = ref([]);
 const roomName = ref('');
 const isError = ref(null);
+
+const emit = defineEmits(['roomCreated'])
+
 
 onMounted(async () => {
     // TODO: refactor to put information in pinia? or local component is enough?
@@ -93,6 +96,11 @@ async function createRoom() {
             room: roomName.value,
             users: addedUsers.value,
             currentUser: user
+        })
+        emit('roomCreated', {
+            name: authStore.username,
+            room: roomName.value,
+            user_id: user.id
         })
         closeModal();
         
